@@ -1,0 +1,342 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Generated server url"
+        }
+    ],
+    "paths": {
+        "/projects": {
+            "get": {
+                "tags": [
+                    "list-projects"
+                ],
+                "operationId": "list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DocumentProjectRow"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}": {
+            "get": {
+                "tags": [
+                    "resolve-project"
+                ],
+                "operationId": "findById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DocumentProject"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/admin/populate": {
+            "get": {
+                "tags": [
+                    "admin-projects"
+                ],
+                "operationId": "populate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/admin/backup": {
+            "get": {
+                "tags": [
+                    "admin-projects"
+                ],
+                "operationId": "export",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DocumentProjectRow": {
+                "required": [
+                    "content",
+                    "docId",
+                    "docType",
+                    "docTypeVersion",
+                    "storeVersion"
+                ],
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "$ref": "#/components/schemas/ProjectRow"
+                    },
+                    "storeVersion": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "docTypeVersion": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "docId": {
+                        "type": "string"
+                    },
+                    "docType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MemberLabel": {
+                "required": [
+                    "fullName",
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "fullName": {
+                        "type": "string"
+                    },
+                    "expertise": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProjectRow": {
+                "required": [
+                    "id",
+                    "owners",
+                    "title"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "owners": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MemberLabel"
+                        }
+                    }
+                }
+            },
+            "Comment": {
+                "required": [
+                    "author",
+                    "text"
+                ],
+                "type": "object",
+                "properties": {
+                    "author": {
+                        "$ref": "#/components/schemas/MemberLabel"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DocumentProject": {
+                "required": [
+                    "content",
+                    "docId",
+                    "docType",
+                    "docTypeVersion",
+                    "storeVersion"
+                ],
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "$ref": "#/components/schemas/Project"
+                    },
+                    "storeVersion": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "docTypeVersion": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "docId": {
+                        "type": "string"
+                    },
+                    "docType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PointListSection": {
+                "required": [
+                    "points",
+                    "title"
+                ],
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Section"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "points": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "Project": {
+                "required": [
+                    "id",
+                    "owners",
+                    "versions"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "owners": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MemberLabel"
+                        }
+                    },
+                    "versions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProjectVersion"
+                        }
+                    }
+                }
+            },
+            "ProjectVersion": {
+                "required": [
+                    "comments",
+                    "sections",
+                    "title"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "oneOf": [
+                                {
+                                    "$ref": "#/components/schemas/PointListSection"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/TextSection"
+                                }
+                            ]
+                        }
+                    },
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Comment"
+                        }
+                    }
+                }
+            },
+            "Section": {
+                "required": [
+                    "title",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "TextSection": {
+                "required": [
+                    "title"
+                ],
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Section"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "text": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,263 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/things/{id}": {
+      "get": {
+        "tags": [
+          "resolve-thing"
+        ],
+        "operationId": "findById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentThing"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/things/mine": {
+      "get": {
+        "tags": [
+          "list-things"
+        ],
+        "operationId": "list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentThingRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/things/admin/populate": {
+      "get": {
+        "tags": [
+          "admin-things"
+        ],
+        "operationId": "populate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/things/admin/backup": {
+      "get": {
+        "tags": [
+          "admin-things"
+        ],
+        "operationId": "export",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DocumentThing": {
+        "required": [
+          "content",
+          "docId",
+          "docType",
+          "docTypeVersion",
+          "storeVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/Thing"
+          },
+          "docType": {
+            "type": "string"
+          },
+          "storeVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "docTypeVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "docId": {
+            "type": "string"
+          }
+        }
+      },
+      "MemberLabel": {
+        "required": [
+          "fullName",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "expertise": {
+            "type": "string"
+          }
+        }
+      },
+      "Thing": {
+        "required": [
+          "designation",
+          "id",
+          "owner",
+          "shareMode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/MemberLabel"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "shareMode": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "SHARED_FOR_FREE",
+              "FOR_RENT",
+              "MUTUALIZED"
+            ]
+          }
+        }
+      },
+      "DocumentThingRow": {
+        "required": [
+          "content",
+          "docId",
+          "docType",
+          "docTypeVersion",
+          "storeVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/ThingRow"
+          },
+          "docType": {
+            "type": "string"
+          },
+          "storeVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "docTypeVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "docId": {
+            "type": "string"
+          }
+        }
+      },
+      "ThingRow": {
+        "required": [
+          "designation",
+          "id",
+          "owner"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/MemberLabel"
+          },
+          "designation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

@@ -87,6 +87,10 @@ export interface SecurityRequirement {
 export interface Schema {
     type?: string;
     properties?: { [key: string]: Schema };
+    discriminator?: {
+        propertyName: string;
+        mapping: { [key: string]: string };
+    };
     required?: string[];
     description?: string;
     items?: Schema;
@@ -106,6 +110,7 @@ export interface Schema {
     exclusiveMinimum?: boolean;
     exclusiveMaximum?: boolean;
     multipleOf?: number;
+    additionalProperties?: boolean | Schema;
 }
 
 export interface Components {

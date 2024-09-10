@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { generateTs } from './generateTs';
-import { OpenAPI } from './model';
+import { OpenAPI } from './extract/model';
 
 describe('generateTs', () => {
   ["01", "02"].forEach(testId => it('should return the expected typescript code', () => {

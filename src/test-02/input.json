@@ -192,6 +192,12 @@
           "designation": {
             "type": "string"
           },
+          "transcripts": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MemberLabel"
+            }
+          },
           "shareMode": {
             "type": "string",
             "enum": [

@@ -18,6 +18,7 @@ export interface Thing {
     id: string;
     owner: MemberLabel;
     designation: string;
+    transcripts?: { [key: string]: MemberLabel };
     shareMode: 'PRIVATE' | 'SHARED_FOR_FREE' | 'FOR_RENT' | 'MUTUALIZED';
 }
 

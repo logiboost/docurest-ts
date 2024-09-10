@@ -1,76 +1,114 @@
 import { AxiosInstance } from 'axios';
 
-export interface DocumentProjectRow {
-    content: ProjectRow;
+export interface RevisionUnitV0 {
+    transcripts: { [key: string]: TranscriptV0 };
+    audioDuration?: number;
+    marked: boolean;
+    title?: string;
+    notes?: string;
+    audioRevisionEnabled: boolean;
+    sufficientExerciseCoverage: boolean;
+}
+
+export interface TranscriptV0 {
+    bodies: string[];
+    listen: boolean;
+    repeatMode: 'DISABLED' | 'LISTEN_ONLY' | 'LISTEN_AND_REPEAT';
+    recallMode: 'DISABLED' | 'RECALL' | 'LISTEN_ONLY';
+}
+
+export interface DocumentRevisionUnitV0 {
+    content: RevisionUnitV0;
     storeVersion: number;
-    docTypeVersion: number;
-    docId: string;
     docType: string;
-}
-
-export interface MemberLabel {
-    id: string;
-    fullName: string;
-    expertise?: string;
-}
-
-export interface ProjectRow {
-    id: string;
-    title: string;
-    owners: MemberLabel[];
-}
-
-export interface Comment {
-    author: MemberLabel;
-    text: string;
-}
-
-export interface DocumentProject {
-    content: Project;
-    storeVersion: number;
-    docTypeVersion: number;
     docId: string;
-    docType: string;
+    docTypeVersion: number;
 }
 
-export interface PointListSection {
-    title: string;
-    type: string;
-    points: string[];
+export interface ReceiveAudioAction {
+
 }
 
-export interface Project {
-    id: string;
-    owners: MemberLabel[];
-    versions: ProjectVersion[];
+export interface InsertRevisionUnitAction {
+    languages: string;
 }
 
-export interface ProjectVersion {
-    title: string;
-    sections: (PointListSection | TextSection)[];
-    comments: Comment[];
+export interface GenerateAudioAction {
+
 }
 
-// export type Section = PointListSection | TextSection;
-
-export interface TextSection {
-    title: string;
-    type: string;
-    text?: string;
+export interface And {
+    filterType: 'AND';
+    leftMember?: Filter;
+    rightMember?: Filter;
 }
 
-export const projects = (client: AxiosInstance) => {
-    return client.get(`/projects`);
+export interface BooleanValue {
+    leafType: 'BOOLEAN';
+    filterType: 'BOOLEAN';
+    value?: boolean;
 }
 
-export const projectsId = (client: AxiosInstance, id: string) => {
-    return client.get(`/projects/${id}`);
+export interface Eq {
+    filterType: 'EQ';
+    leftMember?: Leaf;
+    rightMember?: Leaf;
 }
 
-export const projectsAdminPopulate = (client: AxiosInstance) => {
-    return client.get(`/projects/admin/populate`);
+export interface Field {
+    leafType: 'FIELD';
+    path?: string;
 }
 
-export const projectsAdminBackup = (client: AxiosInstance) => {
-    return client.get(`/projects/admin/backup`);
+export type Filter = And | Eq | BooleanValue;
+
+export type Leaf = StringValue | Field | BooleanValue;
+
+export interface StringValue {
+    leafType: 'STRING';
+    value?: string;
+}
+
+export interface GenerateAllAudioAction {
+
+}
+
+export const revisionUnitsIdUpdate = (client: AxiosInstance, id: string, body: RevisionUnitV0) => {
+    return client.post(`/revisionUnits/${id}/update`, body);
+}
+
+export const revisionUnitsIdReceiveaudio = (client: AxiosInstance, id: string, body: ReceiveAudioAction) => {
+    return client.post(`/revisionUnits/${id}/receiveAudio`, body);
+}
+
+export const revisionUnitsIdInsert = (client: AxiosInstance, id: string, body: InsertRevisionUnitAction) => {
+    return client.post(`/revisionUnits/${id}/insert`, body);
+}
+
+export const revisionUnitsIdGenerateproducts = (client: AxiosInstance, id: string, body: GenerateAudioAction) => {
+    return client.post(`/revisionUnits/${id}/generateProducts`, body);
+}
+
+export const revisionUnitsSelect = (client: AxiosInstance, body: (And | BooleanValue | Eq)) => {
+    return client.post(`/revisionUnits/select`, body);
+}
+
+export const revisionUnitsGenerateproducts = (client: AxiosInstance, body: GenerateAllAudioAction) => {
+    return client.post(`/revisionUnits/generateProducts`, body);
+}
+
+export const revisionUnits = (client: AxiosInstance) => {
+    return client.get(`/revisionUnits`);
+}
+
+export const revisionUnitsId = (client: AxiosInstance, id: string) => {
+    return client.get(`/revisionUnits/${id}`);
+}
+
+export const revisionUnitsAdminPopulateConfirm = (client: AxiosInstance, confirm: boolean) => {
+    return client.get(`/revisionUnits/admin/populate/${confirm}`);
+}
+
+export const revisionUnitsAdminBackup = (client: AxiosInstance) => {
+    return client.get(`/revisionUnits/admin/backup`);
 }

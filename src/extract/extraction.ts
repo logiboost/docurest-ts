@@ -9,6 +9,8 @@ export interface SimpleType {
     getRef: (typeMap: TypeMap) => SimpleType | undefined;
     getParents: (typeMap: TypeMap) => SimpleType[];
     required: boolean;
+    discriminatorProperty?: string;
+    discriminatorMap: { [key: string]: (typeMap: TypeMap) => SimpleType }
 }
 
 export interface SimpleOperation {
@@ -50,16 +52,39 @@ function getProperties(typeMap: TypeMap, schema: Schema): SimpleType[] {
 }
 
 function toSimpleType(key: string, schema: Schema, required?: string[]): SimpleType {
+
+    const discriminatorMap = Object.entries(schema.discriminator?.mapping || {})
+        .map(([k, v]) => ([k, (typeMap: TypeMap) => typeMap[v]] as [string, (typeMap: TypeMap) => SimpleType]))
+        .reduce(
+            (prev, [k, v]) => ({ ...prev, [k]: v }),
+            {}
+        );
+
     if (schema.oneOf) {
         return {
-            name: "",
+            name: key,
             concreatTypes: (typeMap: TypeMap) => schema.oneOf!.map(oo => typeMap[oo.$ref!]),
             primitive: "composite",
             getRef: () => undefined,
             getParents: () => [],
             getProperties: () => [],
             required: false,
-            enum: schema.enum
+            enum: schema.enum,
+            discriminatorProperty: schema.discriminator?.propertyName,
+            discriminatorMap
+        };
+    }
+
+    if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
+        return {
+            name: key,
+            primitive: "map",
+            getRef: (typeMap: TypeMap) => typeMap[(schema.additionalProperties as Schema).$ref!],
+            getParents: () => [],
+            getProperties: () => [],
+            required: !!required && required.includes(key),
+            discriminatorProperty: schema.discriminator?.propertyName,
+            discriminatorMap
         };
     }
 
@@ -71,7 +96,9 @@ function toSimpleType(key: string, schema: Schema, required?: string[]): SimpleT
         getParents: (typeMap: TypeMap) => getParents(typeMap, schema),
         getProperties: (typeMap: TypeMap) => getProperties(typeMap, schema),
         required: !!required && required.includes(key),
-        enum: schema.enum
+        enum: schema.enum,
+        discriminatorProperty: schema.discriminator?.propertyName,
+        discriminatorMap
     };
 }
 
@@ -82,7 +109,6 @@ export function extractTypes(schemaMap?: { [key: string]: Schema }, required?: s
 
     return Object.entries(schemaMap).map(([key, schema]) => toSimpleType(key, schema, required));
 };
-
 
 export const extractOperations = (openAPI: OpenAPI) => Object.entries(openAPI.paths)
     .flatMap(([path, methods]) => Object.entries(methods).map(([method, options]: [string, Operation]) =>
